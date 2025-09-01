@@ -76,7 +76,7 @@ def consume_and_save_parquet(
                     last_write_time = time.time()
 
     except KeyboardInterrupt:
-        print("Shutting down consumer.")
+        print("Shutting down Store App")
     finally:
         # Write any remaining messages before exiting
         if message_buffer:
@@ -87,7 +87,7 @@ def consume_and_save_parquet(
 
         consumer.close()
         s3_client.close()
-        print("Consumer closed.")
+        print("Store App closed.")
 
 
 def upload_to_s3(s3_client, parquet_table, bucket_name, object_name):

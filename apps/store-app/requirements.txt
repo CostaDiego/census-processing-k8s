@@ -1,6 +1,5 @@
-numpy
-pandas
 boto3
-python-dotenv
-pyarrow
 confluent_kafka
+pandas
+pyarrow
+python-dotenv

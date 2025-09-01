@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-app
+  namespace: census-processing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: store-app
+  template:
+    metadata:
+      labels:
+        app: store-app
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: store-app
+        image: store-app:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KAFKA_BROKER
+          value: "10.103.214.95:9092"
+        - name: CENSUS_DATA_TOPIC
+          value: "census-data"
+        - name: GROUP_ID
+          value: "store_app"
+        - name: BATCH_SIZE
+          value: "1000"
+        - name: BATCH_TIMEOUT_SECONDS
+          value: "5"
+        - name: S3_ENDPOINT_URL
+          value: "http://minio.census-processing.svc.cluster.local:9000"
+        - name: S3_ACCESS_KEY_ID
+          value: "CostaDiego"
+        - name: S3_SECRET_ACCESS_KEY
+          value: "censusStorage"
+        - name: S3_BUCKET_NAME
+          value: "target-data"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-app
+  namespace: census-processing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load-app
+  template:
+    metadata:
+      labels:
+        app: load-app
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: load-app
+        image: load-app:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KAFKA_BROKER
+          value: "10.103.214.95:9092"
+        - name: REQUEST_TOPIC
+          value: "census-requests"
+        - name: CENSUS_DATA_TOPIC
+          value: "census-data"
+        - name: GROUP_ID
+          value: "load_app"
+        - name: S3_ENDPOINT_URL
+          value: "http://minio.census-processing.svc.cluster.local:9000"
+        - name: S3_ACCESS_KEY_ID
+          value: "CostaDiego"
+        - name: S3_SECRET_ACCESS_KEY
+          value: "censusStorage"
